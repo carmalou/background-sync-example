@@ -37,4 +37,11 @@ self.addEventListener('sync', function(event) {
     console.log(new Date());
     // get fake API setup
     // event.waitUntil();
+
 });
+
+function callToServer() {
+    // first we reach into indexeddb to grab our data to pass to the server
+    var db = indexedDB.open()
+    // fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f')
+}
