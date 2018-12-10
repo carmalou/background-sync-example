@@ -1,9 +1,10 @@
 window.onload = function() {
+    initializeDB();
     if(navigator.serviceWorker) {
         navigator.serviceWorker.register('./serviceworker.js')
         .then(() => { return navigator.serviceWorker.ready })
         .then(function(registration) {
-            // here we'll use a little feature detection to make sure the user has background sync available!
+            // // here we'll use a little feature detection to make sure the user has background sync available!
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
                     registration.sync.register('test-sync').then(() => {
@@ -20,6 +21,7 @@ window.onload = function() {
 
 function handleClick(e) {
     e.preventDefault();
+    saveData();
 }
 
 function initializeDB() {
@@ -60,6 +62,12 @@ function fetchData() {
             console.log(event.target.result);
         };
     };
+}
+
+function checkInternet() {
+    if(navigator.onLine) {
+        // send request
+    }    
 }
 
 document.getElementById('submitForm').addEventListener('click', handleClick);
