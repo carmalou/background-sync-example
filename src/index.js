@@ -1,5 +1,8 @@
 var fetchIt = require('./fetch.js');
 
+// lastly, check if indexeddb has any data in it on start
+// if so, send it
+
 window.onload = function() {
     initializeDB();
     if(navigator.serviceWorker) {
