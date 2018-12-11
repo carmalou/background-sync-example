@@ -61,15 +61,35 @@ function fetchData() {
 
     myDB.onsuccess = function(event) {
         this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
-            console.log(event.target.result);
+            return event.target.result;
         };
     };
 }
 
 function checkInternet() {
+    var data = fetchData();
+
+    var postObj = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers:{
+          'Content-Type': 'application/json'
+        }
+    };
     if(navigator.onLine) {
         // send request
-        fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f')
+        fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f', postObj)
+        .then(function(response) {
+            var db = window.indexedDB.open('newsletterSignup');
+            db.onsuccess = function(event) {
+                db.transaction("newsletterSignup", "readwrite")
+                .objectStore("newsletterObjStore")
+                .clear();
+            }
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
     }
 }
 
