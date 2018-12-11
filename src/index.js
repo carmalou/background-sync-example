@@ -1,19 +1,21 @@
+var fetchIt = require('./fetch.js');
+
 window.onload = function() {
     initializeDB();
     if(navigator.serviceWorker) {
-        navigator.serviceWorker.register('./serviceworker.js')
+        navigator.serviceWorker.register('./dist/serviceworker.js')
         .then(() => { return navigator.serviceWorker.ready })
         .then(function(registration) {
             // // here we'll use a little feature detection to make sure the user has background sync available!
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
-                    registration.sync.register('test-sync').then(() => {
+                    registration.sync.register('example-sync').then(() => {
                         console.log('Sync registered!');
                     });
                 });
             // if they don't have background sync available, we'll set up something else!
             } else {
-
+                document.getElementById('submitForm').addEventListener('click', checkInternet);
             }
         });
     }
@@ -67,7 +69,8 @@ function fetchData() {
 function checkInternet() {
     if(navigator.onLine) {
         // send request
-    }    
+        fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f')
+    }
 }
 
 document.getElementById('submitForm').addEventListener('click', handleClick);
