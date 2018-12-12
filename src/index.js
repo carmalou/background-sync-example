@@ -11,7 +11,7 @@ window.onload = function() {
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
                     saveData();
-                    registration.sync.register('example-sync').then(() => {
+                    registration.sync.register('example-sync').then(() => { 
                         console.log('Sync registered!');
                     });
                 });
