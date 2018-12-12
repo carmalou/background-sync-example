@@ -33,16 +33,51 @@ self.onfetch = function(event) {
 }
 
 self.addEventListener('sync', function(event) {
-    console.log('i am sync');
-    console.log('event-tag == ', event.tag);
-    console.log(new Date());
-    // get fake API setup
-    // event.waitUntil();
-
+    event.waitUntil(sendToServer().catch((err) => {
+        console.log('err ', err);
+    }));
 });
 
-function callToServer() {
-    // first we reach into indexeddb to grab our data to pass to the server
-    var db = indexedDB.open()
-    // fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f')
+function accessIndexedDB() {
+    var myDB = indexedDB.open('testEmailDB');
+
+    return new Promise(function (resolve, reject) {
+        myDB.onsuccess = function(event) {
+            var request = this.result.transaction("emailObjStore").objectStore("emailObjStore").getAll();
+            
+            request.onsuccess = function(event) {
+                resolve(event.target.result);
+            };
+
+            request.onerror = function (err) {
+                reject(err);
+            };
+        };
+
+        myDB.onerror = function (err) {
+            reject(err);
+        };
+    });
+}
+
+function sendToServer() {
+    return accessIndexedDB()
+        .then(function (data) {
+            return Promise.all(data.map(function(response) {
+                return fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
+                        method: 'POST',
+                        data: response
+                    })
+                    .then(function(rez2) {
+                        return rez2.json();
+                    })
+                    .then(function(rez2) {
+                        console.log('sync response: ', rez2);
+                        return rez2;
+                    })
+            }))
+            .then(function(response) {
+                console.log('arr of fetches: ', response);
+            })
+        })
 }
