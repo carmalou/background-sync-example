@@ -1,10 +1,8 @@
 var fetchIt = require('./fetch.js');
 
-// lastly, check if indexeddb has any data in it on start
-// if so, send it
-
 window.onload = function() {
     initializeDB();
+    checkIndexedDB();
     if(navigator.serviceWorker) {
         navigator.serviceWorker.register('./dist/serviceworker.js')
         .then(() => { return navigator.serviceWorker.ready })
@@ -12,6 +10,7 @@ window.onload = function() {
             // // here we'll use a little feature detection to make sure the user has background sync available!
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
+                    saveData();
                     registration.sync.register('example-sync').then(() => {
                         console.log('Sync registered!');
                     });
@@ -21,12 +20,34 @@ window.onload = function() {
                 document.getElementById('submitForm').addEventListener('click', checkInternet);
             }
         });
+    } else {
+        document.getElementById('submitForm').addEventListener('click', checkInternet);
     }
 }
 
-function handleClick(e) {
-    e.preventDefault();
-    saveData();
+function checkIndexedDB() {
+    if(navigator.onLine) {
+        var newsletterDB = window.indexedDB.open('newsletterSignup');
+        newsletterDB.onsuccess = function(event) {
+            this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
+                event.target.result.forEach(function(record) {
+                    fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers:{
+                          'Content-Type': 'application/json'
+                        }
+                    }).then(function(response) {
+                        db.transaction("newsletterSignup", "readwrite")
+                        .objectStore("newsletterObjStore")
+                        .clear();
+                    }).catch(function(err) {
+                        console.log('err ', err);
+                    })
+                });
+            };
+        };
+    }
 }
 
 function initializeDB() {
@@ -70,6 +91,7 @@ function fetchData() {
 }
 
 function checkInternet() {
+    saveData();
     var data = fetchData();
 
     var postObj = {
@@ -93,7 +115,7 @@ function checkInternet() {
         .catch(function(err) {
             console.log(err);
         });
+    } else {
+        alert("You are offline! When your internet returns, we'll finish up your request.");
     }
 }
-
-document.getElementById('submitForm').addEventListener('click', handleClick);
