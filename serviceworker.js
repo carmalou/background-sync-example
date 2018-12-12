@@ -28,13 +28,15 @@ self.onfetch = function(event) {
             } else {
                 return fetch(event.request);
             }
+        }).catch(function(err) {
+            console.log('line 32 err ', err);
         })
     );
 }
 
 self.addEventListener('sync', function(event) {
     event.waitUntil(sendToServer().catch((err) => {
-        console.log('err ', err);
+        console.log('line 39 err ', err);
     }));
 });
 
@@ -78,6 +80,9 @@ function sendToServer() {
             }))
             .then(function(response) {
                 console.log('arr of fetches: ', response);
+            })
+            .catch(function(err) {
+                console.log('line 85 err ', err);
             })
         })
 }
