@@ -1,15 +1,14 @@
-var fetchIt = require('./src/fetch.js');
-
 window.onload = function() {
     initializeDB();
     checkIndexedDB();
     if(navigator.serviceWorker) {
-        navigator.serviceWorker.register('./dist/serviceworker.js')
+        navigator.serviceWorker.register('./serviceworker.js')
         .then(() => { return navigator.serviceWorker.ready })
         .then(function(registration) {
             // // here we'll use a little feature detection to make sure the user has background sync available!
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
+                    event.preventDefault();
                     saveData();
                     registration.sync.register('example-sync').then(() => { 
                         console.log('Sync registered!');
@@ -93,6 +92,7 @@ function fetchData() {
 }
 
 function checkInternet() {
+    event.preventDefault();
     saveData();
     var data = fetchData();
 

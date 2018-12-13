@@ -1,4 +1,3 @@
-var fetchIt = require('./src/fetch.js')
 self.oninstall = function() {
     caches.open('backgroundSyncExample').then(function(cache) {
         cache.addAll([
