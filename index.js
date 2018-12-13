@@ -1,4 +1,4 @@
-var fetchIt = require('./fetch.js');
+var fetchIt = require('./src/fetch.js');
 
 window.onload = function() {
     initializeDB();
@@ -31,12 +31,14 @@ function checkIndexedDB() {
         newsletterDB.onsuccess = function(event) {
             this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
                 event.target.result.forEach(function(record) {
-                    fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
+                    window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
                         method: 'POST',
                         body: JSON.stringify(data),
                         headers:{
                           'Content-Type': 'application/json'
                         }
+                    }).then(function(rez) {
+                        return rez.json();
                     }).then(function(response) {
                         db.transaction("newsletterSignup", "readwrite")
                         .objectStore("newsletterObjStore")
