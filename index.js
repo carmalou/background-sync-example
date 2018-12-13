@@ -1,10 +1,11 @@
-window.onload = function() {
-    initializeDB();
-    checkIndexedDB();
+(function() {
+    // initializeDB();
+    // checkIndexedDB();
     if(navigator.serviceWorker) {
         navigator.serviceWorker.register('./serviceworker.js')
-        .then(() => { return navigator.serviceWorker.ready })
+        .then(registration => navigator.serviceWorker.ready)
         .then(function(registration) {
+            console.log('lsdjf');
             // // here we'll use a little feature detection to make sure the user has background sync available!
             if(registration.sync) {
                 document.getElementById('submitForm').addEventListener('click', () => {
@@ -18,11 +19,14 @@ window.onload = function() {
             } else {
                 document.getElementById('submitForm').addEventListener('click', checkInternet);
             }
+        })
+        .catch(function(err) {
+            console.log("??? ", err);
         });
     } else {
         document.getElementById('submitForm').addEventListener('click', checkInternet);
     }
-}
+}())
 
 function checkIndexedDB() {
     if(navigator.onLine) {
