@@ -30,3 +30,7 @@ self.onfetch = function(event) {
         })
     );
 }
+
+self.onsync = function(event) {
+    console.log('sync ', event);
+}

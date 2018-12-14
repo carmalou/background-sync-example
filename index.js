@@ -50,9 +50,20 @@ function initializeDB() {
 function initializeServiceWorker() {
     if(navigator.serviceWorker) {
         navigator.serviceWorker.register('./serviceworker.js')
-        .then(function(response) {
-            console.log('rez ', response);
-        });
+        .then(registration => navigator.serviceWorker.ready)
+        .then(function(registration) {
+            document.getElementById('submitForm').addEventListener('click', (event) => {
+                event.preventDefault();
+                if(registration.sync) {
+                    registration.sync.register('test-sync').then(() => {
+                        console.log('sync registered!');
+                    })
+                } else {
+                    // sync isn't there so fallback
+                    console.log('ELSE');
+                }
+            })
+        })
     }
 }
 
