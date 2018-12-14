@@ -1,32 +1,10 @@
-(function() {
-    // initializeDB();
-    // checkIndexedDB();
-    if(navigator.serviceWorker) {
-        navigator.serviceWorker.register('./serviceworker.js')
-        .then(registration => navigator.serviceWorker.ready)
-        .then(function(registration) {
-            console.log('lsdjf');
-            // // here we'll use a little feature detection to make sure the user has background sync available!
-            if(registration.sync) {
-                document.getElementById('submitForm').addEventListener('click', () => {
-                    event.preventDefault();
-                    saveData();
-                    registration.sync.register('example-sync').then(() => { 
-                        console.log('Sync registered!');
-                    });
-                });
-            // if they don't have background sync available, we'll set up something else!
-            } else {
-                document.getElementById('submitForm').addEventListener('click', checkInternet);
-            }
-        })
-        .catch(function(err) {
-            console.log("??? ", err);
-        });
-    } else {
-        document.getElementById('submitForm').addEventListener('click', checkInternet);
-    }
-}())
+function init() {
+    initializeServiceWorker();
+    initializeDB();
+    checkIndexedDB();
+}
+
+init();
 
 function checkIndexedDB() {
     if(navigator.onLine) {
@@ -66,6 +44,15 @@ function initializeDB() {
         newsletterObjStore.createIndex("lastName", "lastName", { unique: false });
         newsletterObjStore.createIndex("email", "email", { unique: true });
         newsletterObjStore.createIndex("dateAdded", "dateAdded", { unique: true });
+    }
+}
+
+function initializeServiceWorker() {
+    if(navigator.serviceWorker) {
+        navigator.serviceWorker.register('./serviceworker.js')
+        .then(function(response) {
+            console.log('rez ', response);
+        });
     }
 }
 
