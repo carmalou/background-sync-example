@@ -32,5 +32,38 @@ self.onfetch = function(event) {
 }
 
 self.onsync = function(event) {
-    console.log('sync ', event);
+    event.waitUntil(
+        getIndexedDB()
+        .then(sendToServer)
+        .catch(function(err) {
+            return err;
+        })
+    );
+}
+
+// down here are the other functions to go get the indexeddb data and also post to our server
+
+function getIndexedDB() {
+    return new Promise(function(resolve, reject) {
+        var db = indexedDB.open('newsletterSignup');
+        db.onsuccess = function(event) {
+            this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
+                resolve(event.target.result);
+            }
+        }
+        db.onerror = function(err) {
+            reject(err);
+        }
+    });
+}
+
+function sendToServer(response) {
+    return fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
+                        method: 'POST',
+                        data: response
+    }).then(function(rez2) {
+        return rez2.text();
+    }).catch(function(err) {
+        return err;
+    })
 }
