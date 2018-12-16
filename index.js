@@ -55,8 +55,9 @@ function initializeServiceWorker() {
             document.getElementById('submitForm').addEventListener('click', (event) => {
                 event.preventDefault();
                 if(registration.sync) {
-                    registration.sync.register('test-sync').then(() => {
-                        console.log('sync registered!');
+                    registration.sync.register('example-sync')
+                    .catch(function(err) {
+                        return err;
                     })
                 } else {
                     // sync isn't there so fallback
