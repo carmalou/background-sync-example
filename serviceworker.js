@@ -33,7 +33,6 @@ self.onfetch = function(event) {
 
 self.onsync = function(event) {
     if(event.tag == 'example-sync') {
-        console.log('i am here on line 36');
         event.waitUntil(
             getIndexedDB()
             .then(sendToServer)

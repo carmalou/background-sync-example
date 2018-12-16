@@ -11,10 +11,9 @@ function checkIndexedDB() {
         var newsletterDB = window.indexedDB.open('newsletterSignup');
         newsletterDB.onsuccess = function(event) {
             this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
-                event.target.result.forEach(function(record) {
-                    window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
+                window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
                         method: 'POST',
-                        body: JSON.stringify(data),
+                        body: JSON.stringify(event.target.result),
                         headers:{
                           'Content-Type': 'application/json'
                         }
@@ -27,7 +26,6 @@ function checkIndexedDB() {
                     }).catch(function(err) {
                         console.log('err ', err);
                     })
-                });
             };
         };
     }
