@@ -60,7 +60,7 @@ function initializeServiceWorker() {
                     })
                 } else {
                     // sync isn't there so fallback
-                    
+                    checkInternet();
                 }
             })
         })
