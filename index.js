@@ -18,9 +18,9 @@ function checkIndexedDB() {
                           'Content-Type': 'application/json'
                         }
                     }).then(function(rez) {
-                        return rez.json();
+                        return rez.text();
                     }).then(function(response) {
-                        db.transaction("newsletterSignup", "readwrite")
+                        newsletterDB.result.transaction("newsletterObjStore", "readwrite")
                         .objectStore("newsletterObjStore")
                         .clear();
                     }).catch(function(err) {
@@ -52,6 +52,7 @@ function initializeServiceWorker() {
         .then(function(registration) {
             document.getElementById('submitForm').addEventListener('click', (event) => {
                 event.preventDefault();
+                saveData();
                 if(registration.sync) {
                     registration.sync.register('example-sync')
                     .catch(function(err) {
@@ -59,7 +60,7 @@ function initializeServiceWorker() {
                     })
                 } else {
                     // sync isn't there so fallback
-                    console.log('ELSE');
+                    
                 }
             })
         })
@@ -94,7 +95,6 @@ function fetchData() {
 
 function checkInternet() {
     event.preventDefault();
-    saveData();
     var data = fetchData();
 
     var postObj = {

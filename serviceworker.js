@@ -33,17 +33,19 @@ self.onfetch = function(event) {
 
 self.onsync = function(event) {
     if(event.tag == 'example-sync') {
-        event.waitUntil(
-            getIndexedDB()
-            .then(sendToServer)
-            .catch(function(err) {
-                return err;
-            })
-        );
+        event.waitUntil(idkmaybe());
     }
 }
 
 // down here are the other functions to go get the indexeddb data and also post to our server
+
+function idkmaybe() {
+    return getIndexedDB()
+    .then(sendToServer)
+    .catch(function(err) {
+        return err;
+    })
+}
 
 function getIndexedDB() {
     return new Promise(function(resolve, reject) {
@@ -62,7 +64,7 @@ function getIndexedDB() {
 function sendToServer(response) {
     return fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(response),
             headers:{
               'Content-Type': 'application/json'
             }
