@@ -135,4 +135,8 @@ window.addEventListener('online', function() {
     if(data.length > 0) {
         sendData();
     }
+});
+
+window.addEventListener('offline', function() {
+    alert('You have lost internet access!');
 })
