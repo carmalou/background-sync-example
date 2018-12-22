@@ -93,8 +93,7 @@ function fetchData() {
     };
 }
 
-function checkInternet() {
-    event.preventDefault();
+function sendData() {
     var data = fetchData();
 
     var postObj = {
@@ -104,21 +103,36 @@ function checkInternet() {
           'Content-Type': 'application/json'
         }
     };
+
+    // send request
+    window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', postObj)
+    .then(clearData)
+    .catch(function(err) {
+        console.log(err);
+    });
+}
+
+function clearData() {
+    var db = window.indexedDB.open('newsletterSignup');
+    db.onsuccess = function(event) {
+        db.transaction("newsletterSignup", "readwrite")
+        .objectStore("newsletterObjStore")
+        .clear();
+    }
+}
+
+function checkInternet() {
+    event.preventDefault();
     if(navigator.onLine) {
-        // send request
-        fetchIt('https://www.mocky.io/v2/5c0452da3300005100d01d1f', postObj)
-        .then(function(response) {
-            var db = window.indexedDB.open('newsletterSignup');
-            db.onsuccess = function(event) {
-                db.transaction("newsletterSignup", "readwrite")
-                .objectStore("newsletterObjStore")
-                .clear();
-            }
-        })
-        .catch(function(err) {
-            console.log(err);
-        });
+        sendData();
     } else {
         alert("You are offline! When your internet returns, we'll finish up your request.");
     }
 }
+
+window.addEventListener('online', function() {
+    var data = fetchData();
+    if(data.length > 0) {
+        sendData();
+    }
+})
