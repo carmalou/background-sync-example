@@ -1,24 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head></head>
+    <head>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            body {
+                background-color: #f5f5f5;
+            }
+
+            .explainer {
+                padding-top: 25px;
+                padding-bottom: 25px;
+            }
+
+            .explainer p {
+                font-weight: 800;
+            }
+        </style>
+    </head>
 
     <body>
-        <h1>Background Sync</h1>
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="text-center">
+                    <div class="explainer">
+                        <h1 class="h1 mb-3 font-weight-normal">Background Sync</h1>
 
-        <p>Let's assume that we have a form, but the internet is spotty. Pop open your console and follow along.</p>
-        
-        <form>
-            <label for="firstname">First Name: </label>
-            <input type="text" name="firstname" id="firstname">
-        
-            <label for="lastname">Last Name: </label>
-            <input type="text" name="lastname" id="lastname">
-        
-            <label for="email">Email: </label>
-            <input type="text" name="email" id="email">
-        
-            <button id="submitForm">Sign up for updates!</button>
-        </form>
+                        <p>Let's assume that we have a form, but the internet is spotty.</p>
+                        <p>Try turning your internet on and off to see different events fire.</p>
+                    </div>
+                    
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="firstname" class="col-md-3 control-label">First Name: </label>
+                            <div class="col-md-9">
+                                <input class="form-control" type="text" name="firstname" id="firstname" placeholder="First Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastname" class="col-md-3 control-label">Last Name: </label>
+                            <div class="col-md-9">
+                                <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="col-md-3 control-label">Email: </label>
+                            <div class="col-md-9">
+                                <input class="form-control" type="text" name="email" id="email" placeholder="Email Address">
+                            </div>
+                        </div>
+                    
+                        <button class="btn btn-lg btn-primary btn-block" id="submitForm">Sign up for updates!</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         
         <script src='./index.js'></script> 
     </body>
