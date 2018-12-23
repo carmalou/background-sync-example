@@ -54,60 +54,74 @@ function initializeServiceWorker() {
         .then(function(registration) {
             document.getElementById('submitForm').addEventListener('click', (event) => {
                 event.preventDefault();
-                saveData();
-                if(registration.sync) {
-                    registration.sync.register('example-sync')
-                    .catch(function(err) {
-                        return err;
-                    })
-                } else {
-                    // sync isn't there so fallback
-                    checkInternet();
-                }
+                saveData().then(function() {
+                    if(registration.sync) {
+                        registration.sync.register('example-sync')
+                        .catch(function(err) {
+                            return err;
+                        })
+                    } else {
+                        // sync isn't there so fallback
+                        checkInternet();
+                    }
+                });
             })
         })
     }
 }
 
 function saveData() {
-    var tmpObj = {
-        firstName: document.getElementById('firstname').value,
-        lastName: document.getElementById('lastname').value,
-        email: document.getElementById('email').value,
-        dateAdded: new Date()
-    };
+    return new Promise(function(resolve, reject) {
+        var tmpObj = {
+            firstName: document.getElementById('firstname').value,
+            lastName: document.getElementById('lastname').value,
+            email: document.getElementById('email').value,
+            dateAdded: new Date()
+        };
+    
+        var myDB = window.indexedDB.open('newsletterSignup');
+    
+        myDB.onsuccess = function(event) {
+          var objStore = this.result.transaction('newsletterObjStore', 'readwrite').objectStore('newsletterObjStore');
+          objStore.add(tmpObj);
+          resolve();
+        }
 
-    var myDB = window.indexedDB.open('newsletterSignup');
-
-    myDB.onsuccess = function(event) {
-      var objStore = this.result.transaction('newsletterObjStore', 'readwrite').objectStore('newsletterObjStore');
-      objStore.add(tmpObj);
-    }
+        myDB.onerror = function(err) {
+            reject(err);
+        }
+    })
 }
 
 function fetchData() {
-    var myDB = window.indexedDB.open('newsletterSignup');
+    return new Promise(function(resolve, reject) {
+        var myDB = window.indexedDB.open('newsletterSignup');
 
-    myDB.onsuccess = function(event) {
-        this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
-            return event.target.result;
+        myDB.onsuccess = function(event) {
+            this.result.transaction("newsletterObjStore").objectStore("newsletterObjStore").getAll().onsuccess = function(event) {
+                resolve(event.target.result);
+            };
         };
-    };
+
+        myDB.onerror = function(err) {
+            reject(err);
+        }
+    })
 }
 
 function sendData() {
-    var data = fetchData();
-
-    var postObj = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers:{
-          'Content-Type': 'application/json'
-        }
-    };
-
-    // send request
-    window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', postObj)
+    fetchData().then(function(response) {
+        var postObj = {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+              'Content-Type': 'application/json'
+            }
+        };
+    
+        // send request
+        return window.fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', postObj)
+    })
     .then(clearData)
     .catch(function(err) {
         console.log(err);
@@ -115,12 +129,20 @@ function sendData() {
 }
 
 function clearData() {
-    var db = window.indexedDB.open('newsletterSignup');
-    db.onsuccess = function(event) {
-        db.transaction("newsletterSignup", "readwrite")
-        .objectStore("newsletterObjStore")
-        .clear();
-    }
+    return new Promise(function(resolve, reject) {
+        var db = window.indexedDB.open('newsletterSignup');
+        db.onsuccess = function(event) {
+            db.transaction("newsletterSignup", "readwrite")
+            .objectStore("newsletterObjStore")
+            .clear();
+
+            resolve();
+        }
+
+        db.onerror = function(err) {
+            reject(err);
+        }
+    })
 }
 
 function checkInternet() {
@@ -133,10 +155,11 @@ function checkInternet() {
 }
 
 window.addEventListener('online', function() {
-    var data = fetchData();
-    if(data.length > 0) {
-        sendData();
-    }
+    fetchData().then(function(response) {
+        if(response.length > 0) {
+            return sendData();
+        }
+    });
 });
 
 window.addEventListener('offline', function() {
