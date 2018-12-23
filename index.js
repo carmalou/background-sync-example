@@ -48,7 +48,9 @@ function initializeDB() {
 function initializeServiceWorker() {
     if(navigator.serviceWorker) {
         navigator.serviceWorker.register('./serviceworker.js')
-        .then(registration => navigator.serviceWorker.ready)
+        .then(function() {
+            return navigator.serviceWorker.ready
+        })
         .then(function(registration) {
             document.getElementById('submitForm').addEventListener('click', (event) => {
                 event.preventDefault();

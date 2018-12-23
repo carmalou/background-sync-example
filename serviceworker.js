@@ -33,13 +33,13 @@ self.onfetch = function(event) {
 
 self.onsync = function(event) {
     if(event.tag == 'example-sync') {
-        event.waitUntil(idkmaybe());
+        event.waitUntil(syncIt());
     }
 }
 
 // down here are the other functions to go get the indexeddb data and also post to our server
 
-function idkmaybe() {
+function syncIt() {
     return getIndexedDB()
     .then(sendToServer)
     .catch(function(err) {
