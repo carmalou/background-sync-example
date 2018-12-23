@@ -8,7 +8,7 @@ However, service workers alone will only get someone part of the way to a truly 
 
 A user pushes a button and a request is fired off to a server somewhere. If there is internet, everything should go off without a hitch. If there is not internet ... well things aren't so simple. The request won't be sent, and perhaps the user realizes their request never made it through, or perhaps they are unaware. Fortunately, there's a better way.
 
-Enter: [background sync](link).
+Enter: [background sync](https://developers.google.com/web/updates/2015/12/background-sync).
 
 ** BACKGROUND SYNC LIFECYCLE **
 
@@ -16,15 +16,15 @@ The lifecycle with background sync is slightly different. First a user makes a r
 
 ** PICTURE FROM CANIUSE **
 
-While background sync is fully supported only in Chrome, Firefox and Edge are currently working on implementing it. Fortunately with the use of feature detection and [`onLine` and `offLine` events](link), we can safely use background sync in any application while also including a fallback.
+While background sync is fully supported only in Chrome, Firefox and Edge are currently working on implementing it. Fortunately with the use of feature detection and [`onLine` and `offLine` events](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/Online_and_offline_events), we can safely use background sync in any application while also including a fallback.
 
 ** PICTURE FROM DEMO **
 
-(If you'd like to follow along with the demo, [the code can be found here](link) and [the demo itself is found here.](link))
+(If you'd like to follow along with the demo, [the code can be found here](https://github.com/carmalou/background-sync-example) and [the demo itself is found here.](link))
 
 Let's assume we have a very simple newsletter signup form. We want the user to be able to signup for our newsletter whether or not they currently have internet access. Let's start with implementing background sync.
 
-(This tutorial assumes you are familiar with service workers. If you are not, [this is a good place to start.](link) If you're unfamiliar with IndexedDB, I recommend [starting here.](link))
+(This tutorial assumes you are familiar with service workers. If you are not, [this is a good place to start.](https://carmalou.com/lets-take-this-offline/2017/12/19/lets-take-this-offline-pt3.html) If you're unfamiliar with IndexedDB, I recommend [starting here.](https://carmalou.com/lets-take-this-offline/2018/07/17/lets-take-this-offline-pt4.html))
 
 When you are first setting up a service worker, you'll have to register it from your application's JavaScript file. That might look like this:
 
@@ -58,7 +58,7 @@ if(navigator.serviceWorker) {
 
 This is a lot more code, but we'll break it down one line at a time.
 
-First we are registering the service worker like before, but now we're taking advantage of the fact that the [`register`](link) function returns a promise. The next piece you see is [`navigator.serviceWorker.ready`](online). This is a read-only property of a service worker that essentially just lets you know if the service worker is ready or not. This property provides a way for us to delay execution of the following functions until the service worker is actually ready.
+First we are registering the service worker like before, but now we're taking advantage of the fact that the [`register`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register) function returns a promise. The next piece you see is [`navigator.serviceWorker.ready`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/ready). This is a read-only property of a service worker that essentially just lets you know if the service worker is ready or not. This property provides a way for us to delay execution of the following functions until the service worker is actually ready.
 
 Next we have a reference to the service worker's registration. We'll put an event listener on our submit button, and at that point register a sync event and pass in a string. That string will be used over on the service worker side later on.
 
@@ -93,15 +93,15 @@ self.onsync = function(event) {
 }
 ```
 
-We attach a function to [`onsync`](link), the event listener for background sync. We want to watch for the string we passed into the register function back in the application's JavaScript. We're watching for that string using [`event.tag`](link).
+We attach a function to [`onsync`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/onsync), the event listener for background sync. We want to watch for the string we passed into the register function back in the application's JavaScript. We're watching for that string using `event.tag`.
 
-We're also using [`event.waitUntil`](link). Because a service worker isn't continually running -- it "wakes up" to do a task and then "goes back to sleep" -- we want to use `event.waitUntil` to keep the service worker active. This function accepts a function parameter. The function we pass in will return a promise, and `event.waitUntil` will keep the service worker "awake" until that function resolves. If we didn't use `event.waitUntil` the request might never make it to the server because the service worker would run the `onsync` function and then immediately go back to sleep.
+We're also using [`event.waitUntil`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil). Because a service worker isn't continually running -- it "wakes up" to do a task and then "goes back to sleep" -- we want to use `event.waitUntil` to keep the service worker active. This function accepts a function parameter. The function we pass in will return a promise, and `event.waitUntil` will keep the service worker "awake" until that function resolves. If we didn't use `event.waitUntil` the request might never make it to the server because the service worker would run the `onsync` function and then immediately go back to sleep.
 
 Looking at the code above, you'll notice we don't have to do anything to check on the status of the user's internet connection or send the request again if the first attempt fails. Background sync is handling all of that for us. Let's take a look at how we access the data in the service worker.
 
 Because a service worker is isolated in its own worker, we won't be able to access any data directly from the DOM. We'll rely on IndexedDB to get the data and then send the data onward to the server.
 
-IndexedDB utilizes callbacks while a service worker is promise-based, so we'll have to account for that in our function. (There are wrappers around IndexedDB that make this process a little simpler. I recommend checking out [sample1](link) or [sample2](link).)
+IndexedDB utilizes callbacks while a service worker is promise-based, so we'll have to account for that in our function. (There are wrappers around IndexedDB that make this process a little simpler. I recommend checking out [IDB](https://github.com/jakearchibald/idb) or [money-clip](https://github.com/HenrikJoreteg/money-clip).)
 
 Here is what our function might look like:
 
@@ -121,7 +121,7 @@ return new Promise(function(resolve, reject) {
 
 Walking through it, we're returning a promise, and we'll use the `resolve` and `reject` parameters to make this function more promise-based to keep everything in line with the service worker.
 
-We'll open a database and we'll use the [`getAll`](link) method to pull all the data from the specified object store. Once that is success, we'll resolve the function with the data. If we have an error, we'll reject. This keeps our error handling working the same way as all of the other promises and makes sure we have the data before we send it off to the server.
+We'll open a database and we'll use the [`getAll`](https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAll) method to pull all the data from the specified object store. Once that is success, we'll resolve the function with the data. If we have an error, we'll reject. This keeps our error handling working the same way as all of the other promises and makes sure we have the data before we send it off to the server.
 
 After we get the data, we just make a fetch request the way we normally would.
 
