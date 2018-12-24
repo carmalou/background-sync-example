@@ -155,13 +155,15 @@ function checkInternet() {
 }
 
 window.addEventListener('online', function() {
-    fetchData().then(function(response) {
-        if(response.length > 0) {
-            return sendData();
-        }
-    });
+    if(!navigator.serviceWorker) {
+        fetchData().then(function(response) {
+            if(response.length > 0) {
+                return sendData();
+            }
+        });
+    }
 });
 
 window.addEventListener('offline', function() {
     alert('You have lost internet access!');
-})
+});
