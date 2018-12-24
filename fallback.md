@@ -4,6 +4,10 @@
 
 # How background sync helps
 
+# Request lifecycle
+
+# Request lifecycle with background sync
+
 # IndexedDB
 
 # Implement background sync in index.js
