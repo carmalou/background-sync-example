@@ -1,30 +1,34 @@
-Service workers have been having a moment. In March 2018, iOS Safari began including service workers -- so all major browsers at this point support offline options.
+Service workers have been having a moment. In March 2018, iOS Safari began including service workers -- so all major browsers at this point support offline options. And this is more important than ever -- 20% of adults in the United States are without Internet at home, leaving these individuals relying solely on a cellphone to access most information. This can include something as simple as checking a bank balance or something as tedious as searching for a job, or even researching illnesses. 
 
-With 20% of adults in the United States going without Internet at home, they are forced to rely solely on a cellphone to access most information. This can include something as simple as checking a bank balance, or something as tedious as searching for a job, or even researching illnesses. This highlights the necessity of offline-supported applications, and including a service worker is a great start. 
+Offline-supported applications are a necessity, and including a service worker is a great start. However, service workers alone will only get someone part of the way to a truly seamless online-to-offline experience. Caching assets is great, but without an internet connection you still can't access new data or send any requests. 
 
-However, service workers alone will only get someone part of the way to a truly seamless online-to-offline experience. Caching assets is great, but without an internet connection you still can't access new data or send any requests. Currently a request might look like this:
+### The Request Lifecycle
 
-** REQUEST LIFECYCLE **
+Currently a request might look like this:
+
+![The Request Lifecycle](./img/request-lifecycle.gif)
 
 A user pushes a button and a request is fired off to a server somewhere. If there is internet, everything should go off without a hitch. If there is not internet ... well things aren't so simple. The request won't be sent, and perhaps the user realizes their request never made it through, or perhaps they are unaware. Fortunately, there's a better way.
 
 Enter: [background sync](https://developers.google.com/web/updates/2015/12/background-sync).
 
-** BACKGROUND SYNC LIFECYCLE **
+### Background Sync
+
+![The Background Sync Lifecycle](./img/bg-sync.lifecycle.png)
 
 The lifecycle with background sync is slightly different. First a user makes a request, but instead of the request being attempted immediately, the service worker steps in. The service worker will check if the user has internet access -- if they do, great. The request will be sent. If not, the service worker will wait until the user _does_ have internet and at that point send the request, after it fetches data out of IndexedDB. Best of all, background sync will go ahead and send the request even if the user has navigated away from the original page.
 
-** PICTURE FROM CANIUSE **
+![Background Sync Support](./img/caniuse.png)
 
 While background sync is fully supported only in Chrome, Firefox and Edge are currently working on implementing it. Fortunately with the use of feature detection and [`onLine` and `offLine` events](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/Online_and_offline_events), we can safely use background sync in any application while also including a fallback.
 
-** PICTURE FROM DEMO **
+![A simple newsletter signup app](./img/demo.png)
 
-(If you'd like to follow along with the demo, [the code can be found here](https://github.com/carmalou/background-sync-example) and [the demo itself is found here.](link))
+(If you'd like to follow along with the demo, [the code can be found here](https://github.com/carmalou/background-sync-example) and [the demo itself is found here.](https://elastic-feynman-f4d91f.netlify.com/))
 
 Let's assume we have a very simple newsletter signup form. We want the user to be able to signup for our newsletter whether or not they currently have internet access. Let's start with implementing background sync.
 
-(This tutorial assumes you are familiar with service workers. If you are not, [this is a good place to start.](https://carmalou.com/lets-take-this-offline/2017/12/19/lets-take-this-offline-pt3.html) If you're unfamiliar with IndexedDB, I recommend [starting here.](https://carmalou.com/lets-take-this-offline/2018/07/17/lets-take-this-offline-pt4.html))
+(This tutorial assumes you are familiar with service workers. If you are not, [this is a good place to start.](https://carmalou.com/lets-take-this-offline/2017/12/19/lets-take-this-offline-pt3.html) If you're unfamiliar with IndexedDB, [I recommend starting here.](https://carmalou.com/lets-take-this-offline/2018/07/17/lets-take-this-offline-pt4.html))
 
 When you are first setting up a service worker, you'll have to register it from your application's JavaScript file. That might look like this:
 
@@ -138,23 +142,3 @@ fetch('https://www.mocky.io/v2/5c0452da3300005100d01d1f', {
 Of course all of this will only run if the user has Internet access. If the user does not have Internet access, the service worker will wait until the connection has returned. If, once the connection returns, the fetch request fails, the service worker will attempt a maximum of three times before it stops trying to send the request for good.
 
 Now that we've set up background sync, we are ready to set up our fallback for browsers that don't support background sync. Read on for part 2!
-
-# The issue: 20% of Americans without internet at home
-
-# Service workers (brief discussion)
-
-# How background sync helps
-
-# Request lifecycle
-
-# Request lifecycle with background sync
-
-# IndexedDB
-
-# Implement background sync in index.js
-
-# Set up sync listener in service worker
-
-# Access indexeddb from sw
-
-# Backup plan
