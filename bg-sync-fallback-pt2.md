@@ -97,6 +97,8 @@ This fallback won't entirely replace background sync for a few reasons. Firstly,
 
 Our solution won't be able to send the request even if the user navigates away, but we can pre-emptively check IndexedDB as soon as the page loads and send any cached data immediately. This solution also watches for any network connection changes, and sends cached data as soon as the connection returns.
 
-### Wrapping up
+### Next steps in offline support
 
-** SOME KIND OF WRAP UP **
+Edge and Firefox browsers are currently working on implementing background sync, which is fantastic. It is one of the best features for providing a more empathetic experience for users moving between internet connection and connection loss. Fortunately with a little help from online and offline events and IndexedDB, we can start providing a better experience for users today.
+
+If you'd like to learn more about offline techniques, check out my blog: [carmalou.com](https://carmalou.com/) or [follow me on Twitter.](https://twitter.com/carmalou)
