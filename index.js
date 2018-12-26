@@ -155,7 +155,7 @@ function checkInternet() {
 }
 
 window.addEventListener('online', function() {
-    if(!navigator.serviceWorker) {
+    if(!navigator.serviceWorker && !window.SyncManager) {
         fetchData().then(function(response) {
             if(response.length > 0) {
                 return sendData();
