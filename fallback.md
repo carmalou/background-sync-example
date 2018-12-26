@@ -1,6 +1,10 @@
+### Support for legacy browsers
+
 In our last post, we were building a simple newsletter signup app. We set up background sync in a service worker, so the user could sign up for the newsletter with or without internet access. [Background sync](https://developers.google.com/web/updates/2015/12/background-sync) allows a service worker to intercept outgoing fetch requests. If the user doesn't have internet access, the service worker will attempt the fetch request once the internet connection has returned.
 
 Unfortunately, service workers aren't supported in legacy browsers and the background sync feature is only supported in Chrome as of now. In this post we'll focus on utilizing other offline features in order to mimic background sync and offer a similar experience.
+
+### Online and Offline Events
 
 We'll start with [online and offline events.](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/Online_and_offline_events) Our code to register the service work last time looked like this:
 
@@ -44,6 +48,8 @@ if(registration.sync) {
     }
 }
 ```
+
+### Additional support
 
 We're using `navigator.onLine` to check the user's internet connection. If they have a connection, this will return true. If they have an internet connection, we'll go ahead and send off the data. Otherwise, we'll pop up an alert letting the user know that their data hasn't been sent.
 
@@ -90,5 +96,7 @@ Next we'll verify that the response from IndexedDB actually has data, and if it 
 This fallback won't entirely replace background sync for a few reasons. Firstly, we are checking for online and offline events, which we do not need to do with background sync because background sync handles all that for us. Additionally, background sync will continue attempting to send requests even if the user has navigated away from the page.
 
 Our solution won't be able to send the request even if the user navigates away, but we can pre-emptively check IndexedDB as soon as the page loads and send any cached data immediately. This solution also watches for any network connection changes, and sends cached data as soon as the connection returns.
+
+### Wrapping up
 
 ** SOME KIND OF WRAP UP **
