@@ -4,7 +4,7 @@ self.oninstall = function(event) {
         cache.addAll([
             '/',
             'index.html',
-            'index.js'
+            './dist/bundle.js'
         ])
         .catch(function(err) {
             console.log('files not added ', err);
