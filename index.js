@@ -71,6 +71,8 @@ function initializeServiceWorker() {
                 });
             })
         })
+    } else {
+        checkInternet();
     }
 }
 
