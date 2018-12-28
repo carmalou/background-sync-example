@@ -124,7 +124,7 @@ function sendData() {
     fetchData().then(function(response) {
         var postObj = {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(response),
             headers:{
               'Content-Type': 'application/json'
             }
