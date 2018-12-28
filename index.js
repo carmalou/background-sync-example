@@ -72,8 +72,12 @@ function initializeServiceWorker() {
             })
         })
     } else {
-        checkInternet();
-    }
+        document.getElementById('submitForm').addEventListener('click', (event) => {
+            event.preventDefault();
+            saveData().then(function() {
+                checkInternet();
+            });
+    }   )
 }
 
 function saveData() {
