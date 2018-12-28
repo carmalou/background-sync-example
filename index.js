@@ -1,4 +1,6 @@
 require('indexeddb-getall-shim');
+import 'promise-polyfill/src/polyfill';
+import 'whatwg-fetch';
 
 function init() {
     initializeServiceWorker();
