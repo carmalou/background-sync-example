@@ -77,7 +77,8 @@ function initializeServiceWorker() {
             saveData().then(function() {
                 checkInternet();
             });
-    }   )
+        })
+    }
 }
 
 function saveData() {
