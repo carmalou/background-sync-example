@@ -1,3 +1,5 @@
+require('indexeddb-getall-shim');
+
 function init() {
     initializeServiceWorker();
     initializeDB();
@@ -47,7 +49,7 @@ function initializeDB() {
 
 function initializeServiceWorker() {
     if(navigator.serviceWorker) {
-        navigator.serviceWorker.register('./serviceworker.js')
+        navigator.serviceWorker.register('./dist/serviceworker.js')
         .then(function() {
             return navigator.serviceWorker.ready
         })
